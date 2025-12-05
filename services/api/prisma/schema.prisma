@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  openid    String   @unique
+  nickname  String?
+  avatar    String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  createdGroups Group[] @relation("GroupCreator")
+  joinedGroups  GroupUser[]
+  orders        Order[]
+
+  @@map("users")
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  creatorId   String
+  status      GroupStatus @default(ACTIVE)
+  maxMembers  Int      @default(50)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator  User        @relation("GroupCreator", fields: [creatorId], references: [id])
+  members  GroupUser[]
+  products Product[]
+  orders   Order[]
+
+  @@map("groups")
+}
+
+model GroupUser {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  role      GroupUserRole @default(MEMBER)
+  joinedAt  DateTime @default(now())
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_users")
+}
+
+model Product {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal
+  imageUrl    String?
+  groupId     String
+  status      ProductStatus @default(AVAILABLE)
+  minQuantity Int          @default(1)
+  maxQuantity Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  group  Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@map("products")
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  groupId    String
+  productId  String
+  quantity   Int
+  totalPrice Decimal
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id])
+  group   Group   @relation(fields: [groupId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("orders")
+}
+
+enum GroupStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum GroupUserRole {
+  ADMIN
+  MEMBER
+}
+
+enum ProductStatus {
+  AVAILABLE
+  UNAVAILABLE
+  OUT_OF_STOCK
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
