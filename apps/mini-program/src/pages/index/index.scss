@@ -1,0 +1,60 @@
+.container {
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  display: block;
+  margin-bottom: 24px;
+}
+
+.features {
+  margin-bottom: 40px;
+}
+
+.feature-item {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feature-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.feature-desc {
+  font-size: 14px;
+  color: #666;
+  display: block;
+}
+
+.actions {
+  text-align: center;
+}
+
+.btn {
+  width: 200px;
+  height: 44px;
+  line-height: 44px;
+  border-radius: 22px;
+}
+
+.btn-primary {
+  background-color: #07c160;
+  color: white;
+}
